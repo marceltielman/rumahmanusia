@@ -165,6 +165,14 @@ content would be invisible. Doing this safely means moving reveal from a
 per-section directive to a shell-level service that queries the DOM, as the
 vanilla build does. Worth a follow-up; needs care, since a mistake hides content.
 
+### One more defect, found by the owner running `ng serve`
+
+`NgOptimizedImage` rejects pixel values in `sizes` (NG02952) and the portraits
+used them, so the dev server would not boot. The assertion is development-mode
+only and stripped from production builds — parity had been verified against
+`ng build` output alone, so the production bundle was clean while dev mode was
+broken. Fixed, and dev-mode console checking added to the verification routine.
+
 ### Tests
 
 17 Vitest tests across 3 files, all passing: schedule geometry derivation,
