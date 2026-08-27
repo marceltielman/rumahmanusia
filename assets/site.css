@@ -333,3 +333,12 @@ section[id] { scroll-margin-top: 84px; }
 
 /* eleventy-img emits <picture>; keep it filling its circular frame. */
 .rm-face picture, .rm-founder picture { display: block; width: 100%; height: 100%; }
+
+/* Paired keyframes. Alternating between two identical animations is how a
+   framework-rendered page restarts an entrance: bind a different name and the
+   browser replays it, with no imperative DOM poking. The vanilla build uses a
+   replay() helper instead and only needs the first of each pair. */
+@keyframes rm-in-b { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes rm-t-b { from { opacity: 0; transform: translateY(12px) scale(0.985); } to { opacity: 1; transform: none; } }
+@keyframes rm-q-a2 { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+@keyframes rm-q-b2 { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
