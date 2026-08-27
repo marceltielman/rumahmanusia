@@ -19,7 +19,11 @@
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
           {%- for s in hero.stats %}
           <div class="rm-stat">
-            <div class="rm-stat-v" data-from="{{ s.from }}" data-to="{{ s.to }}" data-suffix="{{ s.suffix }}">{{ s.from }}{{ s.suffix }}</div>
+            {#- Render the final figure, not the starting one: without JavaScript the
+                page must not claim there are 0 training programs. app.js rewinds to
+                data-from and counts up, invisible because the hero stays transparent
+                until .rm-lit lands. -#}
+            <div class="rm-stat-v" data-from="{{ s.from }}" data-to="{{ s.to }}" data-suffix="{{ s.suffix }}">{{ s.to }}{{ s.suffix }}</div>
             <div class="rm-stat-l">{{ s.label }}</div>
           </div>
           {%- endfor %}

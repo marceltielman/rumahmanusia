@@ -384,10 +384,12 @@
       circle.setAttribute("r", active ? "9" : "5");
       circle.setAttribute("fill", active ? ACCENT : IDLE);
       text.setAttribute("font-weight", active ? "600" : "400");
+      node.setAttribute("aria-pressed", active ? "true" : "false");
     });
 
     barNodes.forEach(function (node, i) {
       $$("rect", node)[1].setAttribute("fill", i === month ? ACCENT : IDLE);
+      node.setAttribute("aria-pressed", i === month ? "true" : "false");
     });
 
     monthPills.forEach(function (pill, i) {
