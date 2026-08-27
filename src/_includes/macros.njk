@@ -1,0 +1,19 @@
+{# Icon shapes come from src/_data/icons.js, referenced by name in content. #}
+{% macro icon(name, stroke = "var(--color-accent)", size = 26, cls = "rm-icon") -%}
+<svg class="{{ cls }}" width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="{{ stroke }}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ icons[name] }}"></path></svg>
+{%- endmacro %}
+
+{# Empty photo placeholder. Drop an <img> inside to fill one. #}
+{% macro slot(id, caption) -%}
+<div class="rm-slot" id="{{ id }}"><span>{{ caption }}</span></div>
+{%- endmacro %}
+
+{# Eyebrow label. `wipe` adds the underline animation used inside .rm-rise. #}
+{% macro eyebrow(text, wipe = true, style = "") -%}
+<p class="rm-eyebrow{% if wipe %} rm-kick{% endif %}"{% if style %} style="{{ style }}"{% endif %}>{{ text }}</p>
+{%- endmacro %}
+
+{# Tab button for a [role=tablist][data-tabs] group. #}
+{% macro tab(group, index, label) -%}
+<button type="button" class="rm-tab" role="tab" id="rm-{{ group }}-tab-{{ index }}" aria-selected="{{ 'true' if index == 0 else 'false' }}" aria-controls="rm-{{ group }}-{{ index }}">{{ label }}</button>
+{%- endmacro %}

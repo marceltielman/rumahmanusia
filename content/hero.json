@@ -1,0 +1,44 @@
+{
+  "eyebrow": "Training · Coaching · Consulting · Counselling · Assessment",
+  "heading": "Human skills, taught the way the mind actually works.",
+  "lead": "Since 2014 we have been helping clients and people through training programs designed to develop personal and professional skills.",
+  "secondaryCta": {
+    "label": "Browse 69 programs",
+    "href": "#programs"
+  },
+  "tags": [
+    "Cognitive psychology",
+    "Cognitive science",
+    "In-house · online · public"
+  ],
+  "stats": [
+    {
+      "from": 1990,
+      "to": 2014,
+      "suffix": "",
+      "label": "Practising since"
+    },
+    {
+      "from": 0,
+      "to": 69,
+      "suffix": "",
+      "label": "Training programs"
+    },
+    {
+      "from": 0,
+      "to": 60,
+      "suffix": "+",
+      "label": "Client organizations"
+    },
+    {
+      "from": 0,
+      "to": 28,
+      "suffix": "",
+      "label": "Trainers & coaches"
+    }
+  ],
+  "slots": {
+    "panel": "Training room, hands raised",
+    "wide": "Wide hero photograph — full room, trainer at front"
+  }
+}

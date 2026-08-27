@@ -1,0 +1,94 @@
+{
+  "clients": {
+    "eyebrow": "Training impact on 60+ organizations across Indonesia"
+  },
+  "vision": {
+    "eyebrow": "Our vision",
+    "heading": "Training that goes past technique, into how people think and feel.",
+    "lead": "To become a center of excellence in holistic human development, with a focus on increasing individual and organizational capacity through innovative, inclusive and sustainable training, coaching, consulting and counselling. In other words, enabling excellence in human being.",
+    "missionEyebrow": "Our mission",
+    "mission": [
+      {
+        "title": "Personal and professional skills",
+        "body": "Provide training programs designed to develop personal and professional skills."
+      },
+      {
+        "title": "Mental and emotional well-being",
+        "body": "Provide training that not only focuses on life skills and human skills, but also on mental and emotional well-being."
+      },
+      {
+        "title": "Twelve years in the room",
+        "body": "Practising since 2014 with ministries, banks, manufacturers, hospitals and universities."
+      }
+    ]
+  },
+  "what": {
+    "eyebrow": "What we do",
+    "heading": "Five ways we work with an organization.",
+    "lead": "One team across the whole arc — from the classroom to the individual conversation, and the measurement around both."
+  },
+  "strategies": {
+    "eyebrow": "Our approach",
+    "heading": "Two core strategies of understanding human.",
+    "lead": "We help clients and people through training, coaching, consulting, counselling, assessment based on 2 core strategies of understanding human."
+  },
+  "formats": {
+    "eyebrow": "Featured formats",
+    "heading": "Built for the way your people actually learn.",
+    "slots": [
+      "Corporate training room",
+      "In-house session at client office",
+      "Workshop or seminar audience"
+    ]
+  },
+  "programs": {
+    "eyebrow": "Program catalogue",
+    "heading": "Sixty-nine programs, soft skills and hard skills.",
+    "searchLabel": "Search programs",
+    "searchPlaceholder": "e.g. leadership, selling, mental",
+    "emptyNote": "No program matches that search. Try “selling”, “leadership” or “mental”."
+  },
+  "schedule": {
+    "eyebrow": "2026-27 schedule",
+    "heading": "Fourteen months of public runs, already dated.",
+    "playLabel": "Play through the year",
+    "playHint": "One month every 2.2 seconds",
+    "chartLabel": "Topics per month"
+  },
+  "online": {
+    "eyebrow": "Online learning",
+    "heading": "Live online classes and e-learning modules.",
+    "lead": "From single-topic webinars to multi-batch programs, run for teams spread across cities.",
+    "modulesLabel": "E-learning modules",
+    "webinarsLabel": "Webinars",
+    "slot": "Online class grid view"
+  },
+  "advantages": {
+    "eyebrow": "Why organizations stay",
+    "heading": "Tailored, measured, and delivered by people who have done the work."
+  },
+  "testimony": {
+    "eyebrow": "Testimony"
+  },
+  "team": {
+    "eyebrow": "The team",
+    "heading": "Trainers, coaches and consultants who have run the room."
+  },
+  "cta": {
+    "eyebrow": "Get started",
+    "heading": "Bring a program that understands your people.",
+    "secondary": { "label": "See the schedule", "href": "#schedule" }
+  },
+  "contact": {
+    "eyebrow": "Contact us",
+    "heading": "Tell us what your team needs.",
+    "formTitle": "Request a program",
+    "fields": [
+      { "name": "name", "label": "Name", "type": "text", "required": true },
+      { "name": "org", "label": "Organization", "type": "text", "required": false },
+      { "name": "email", "label": "Email", "type": "email", "required": true },
+      { "name": "topic", "label": "Program of interest", "type": "text", "required": false,
+        "placeholder": "Any of the 69 programs" }
+    ]
+  }
+}

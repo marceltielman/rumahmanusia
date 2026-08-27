@@ -1,0 +1,32 @@
+[
+  {
+    "num": "01",
+    "name": "Training",
+    "icon": "presentation",
+    "body": "Classroom, in-house and online programs on soft skills and human skills."
+  },
+  {
+    "num": "02",
+    "name": "Coaching",
+    "icon": "chat",
+    "body": "One-to-one and team coaching for performance and career goals."
+  },
+  {
+    "num": "03",
+    "name": "Consulting",
+    "icon": "users",
+    "body": "Capacity building and people development advice for organizations."
+  },
+  {
+    "num": "04",
+    "name": "Counselling",
+    "icon": "heart",
+    "body": "Support for mental and emotional well-being at work."
+  },
+  {
+    "num": "05",
+    "name": "Assessment",
+    "icon": "clipboard-check",
+    "body": "Measuring behaviour, personality and readiness before and after programs."
+  }
+]

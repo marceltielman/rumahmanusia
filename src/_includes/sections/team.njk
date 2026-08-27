@@ -1,0 +1,24 @@
+<section class="rm-rise" id="team">
+  <div class="rm-wrap">
+    {{ m.eyebrow(sections.team.eyebrow) }}
+    <h2 class="rm-h2">{{ sections.team.heading }}</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start;margin-top:40px">
+      <div style="flex:0 1 240px;min-width:200px">
+        <div class="rm-founder">{% photo team.founder.photo, team.founder.name, [205], "260px", { loading: "eager" } %}</div>
+        <h4 style="margin:18px 0 4px;font-weight:500">{{ team.founder.name }}</h4>
+        <div class="rm-metalabel">{{ team.founder.role }}</div>
+      </div>
+      <div style="flex:1 1 640px;min-width:0">
+        <div class="rm-facegrid">
+          {%- for member in team.members %}
+          {#- Diagonal scan reveal: delay grows with column + row of a 9-wide grid. -#}
+          {% set col = loop.index0 % 9 %}
+          {% set row = (loop.index0 / 9) | round(0, "floor") %}
+          <div class="rm-face" style="animation-delay:{{ 450 + (col + row) * 280 }}ms">{% photo member.photo, member.name or "Trainer", [100, 200], "(max-width: 1040px) 20vw, 72px" %}</div>
+          {%- endfor %}
+        </div>
+        <p class="text-muted" style="margin-top:20px;font-size:14px">{{ team.note }}</p>
+      </div>
+    </div>
+  </div>
+</section>

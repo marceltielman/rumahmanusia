@@ -1,0 +1,21 @@
+<section class="rm-rise" id="clients">
+  <div class="rm-wrap" style="padding:clamp(32px,4vw,48px) clamp(20px,4vw,40px)">
+    {{ m.eyebrow(sections.clients.eyebrow, false) }}
+    <div class="rm-marquee" style="position:relative;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)">
+      {# Duplicated once: the track scrolls -50% so the loop is seamless. #}
+      <div class="rm-track" style="display:flex;gap:16px;width:max-content">
+        {%- for pass in [1, 2] %}{% for c in clients.featured %}
+        <div class="rm-logo">
+          <div class="rm-logo-frame"><img src="https://www.google.com/s2/favicons?domain={{ c.domain }}&amp;sz=128" alt="{{ c.name }}" loading="lazy" width="32" height="32"></div>
+          <span class="rm-logo-name">{{ c.name }}</span>
+        </div>
+        {%- endfor %}{% endfor %}
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px">
+      {%- for name in clients.all %}
+      <span class="rm-clientpill">{{ name }}</span>
+      {%- endfor %}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+<section class="rm-rise" id="what">
+  <div class="rm-wrap">
+    {{ m.eyebrow(sections.what.eyebrow) }}
+    <h2 class="rm-h2">{{ sections.what.heading }}</h2>
+    <p class="rm-lead" style="margin-bottom:48px">{{ sections.what.lead }}</p>
+    <div class="rm-grid">
+      {%- for s in services %}
+      <div class="rm-card rm-panelcard">
+        <div class="rm-cardhead">{{ m.icon(s.icon) }}<span class="rm-cardnum">{{ s.num }}</span></div>
+        <h4 class="rm-cardtitle">{{ s.name }}</h4>
+        <p class="rm-cardbody">{{ s.body }}</p>
+      </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>

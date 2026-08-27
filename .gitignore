@@ -1,28 +1,30 @@
-# Angular specific
-/dist/
-/out-tsc/
-/tmp/
-/coverage/
-/e2e/test-output/
-/.angular/
-.angular/
+# Build output
+_site/
+studio/dist/
 
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
+# Dependencies — package-lock.json IS committed so Cloudflare builds are
+# reproducible. (The repo's initial .gitignore excluded it; that would make
+# every CI install resolve fresh versions.)
+node_modules/
 
-# Environment files
-/.env
+# Sanity Studio local state
+studio/.sanity/
 
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
+# Regenerable Sanity seed, built from content/*.json
+content/.seed.ndjson
 
-# TypeScript cache
-*.tsbuildinfo
+# Local scratch — fetched copy of the Claude Design canvas source
+.import/
+
+# Environment
+.env
+.env.*
+!.env.example
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# macOS
+.DS_Store

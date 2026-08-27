@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Training for companies",
+    "items": [
+      {
+        "num": "01",
+        "title": "Corporate Training Programs",
+        "body": "Training programs specifically designed for company needs, including leadership training, project management, communications, and team development."
+      },
+      {
+        "num": "02",
+        "title": "In-house training",
+        "body": "Training sessions tailored to an organization's specific needs, held at the client's location."
+      },
+      {
+        "num": "03",
+        "title": "Workshops & seminars",
+        "body": "Interactive sessions that focus on current topics, such as digital transformation, mental health, and thinking skills."
+      }
+    ]
+  },
+  {
+    "name": "Training for personal",
+    "items": [
+      {
+        "num": "01",
+        "title": "Professional Development Courses",
+        "body": "Courses designed to help individuals improve their professional skills in areas such as working excellence, self management, selling skills and communication skills."
+      },
+      {
+        "num": "02",
+        "title": "Certification Programs",
+        "body": "Internationally recognized certification programs to increase credibility and competitiveness in the job market such as Human Excellence Specialist, Human Excellence Coach, and Certified Life Coach from Rumah Manusia."
+      },
+      {
+        "num": "03",
+        "title": "Career Coaching",
+        "body": "Coaching services that support individuals in planning and achieving their career goals."
+      }
+    ]
+  }
+]

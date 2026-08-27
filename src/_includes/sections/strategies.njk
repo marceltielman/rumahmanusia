@@ -1,0 +1,22 @@
+<section class="rm-rise" id="strategies">
+  <div class="rm-wrap">
+    {{ m.eyebrow(sections.strategies.eyebrow) }}
+    <h2 class="rm-h2">{{ sections.strategies.heading }}</h2>
+    <p class="rm-lead">{{ sections.strategies.lead }}</p>
+    <div class="rm-tabrow" role="tablist" aria-label="Core strategies" data-tabs="strategy" style="margin:36px 0 0">
+      {%- for s in strategies %}
+      {{ m.tab("strat", loop.index0, s.name) }}
+      {%- endfor %}
+    </div>
+    {%- for s in strategies %}
+    <div class="rm-grid rm-tabpanel" role="tabpanel" id="rm-strat-{{ loop.index0 }}" aria-labelledby="rm-strat-tab-{{ loop.index0 }}" style="margin-top:28px"{% if not loop.first %} hidden{% endif %}>
+      {%- for it in s.items %}
+      <div class="rm-card" style="background:var(--color-surface);border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;min-height:118px">
+        <div style="display:flex;align-items:center;justify-content:space-between">{{ m.icon(it.icon) }}<span class="rm-cardnum">{{ loop.index | pad }}</span></div>
+        <span style="font-family:var(--font-heading);font-weight:500;font-size:18px;line-height:1.25;letter-spacing:-0.01em;margin-top:20px">{{ it.name }}</span>
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endfor %}
+  </div>
+</section>

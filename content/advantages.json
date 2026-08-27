@@ -1,0 +1,26 @@
+[
+  {
+    "num": "01",
+    "title": "Experience & Reputation",
+    "icon": "award",
+    "body": "Our team consists of experienced professionals with extensive backgrounds in various industries."
+  },
+  {
+    "num": "02",
+    "title": "Personalized Approach",
+    "icon": "sliders",
+    "body": "We offer training solutions that are completely tailored to clients' specific needs."
+  },
+  {
+    "num": "03",
+    "title": "Innovation",
+    "icon": "brain",
+    "body": "Using the latest learning methods and technology to ensure effectiveness and participant engagement."
+  },
+  {
+    "num": "04",
+    "title": "Performance",
+    "icon": "trending-up",
+    "body": "We focus on achieving real, measurable results that have a direct impact on performance and productivity."
+  }
+]

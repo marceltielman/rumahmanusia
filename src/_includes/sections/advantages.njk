@@ -1,0 +1,15 @@
+<section class="rm-rise" id="advantages">
+  <div class="rm-wrap">
+    {{ m.eyebrow(sections.advantages.eyebrow) }}
+    <h2 class="rm-h2">{{ sections.advantages.heading }}</h2>
+    <div class="rm-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));margin-top:40px">
+      {%- for a in advantages %}
+      <div class="rm-card rm-panelcard">
+        <div style="display:flex;align-items:center;gap:12px">{{ m.icon(a.icon, "var(--color-accent-2-700)") }}<span style="font-family:var(--font-heading);font-weight:500;font-size:22px;color:var(--color-accent-2-700);line-height:1">{{ a.num }}</span></div>
+        <h4 class="rm-cardtitle" style="margin:14px 0 10px">{{ a.title }}</h4>
+        <p class="rm-cardbody">{{ a.body }}</p>
+      </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>

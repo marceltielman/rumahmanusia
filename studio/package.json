@@ -1,0 +1,20 @@
+{
+  "name": "rumah-manusia-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sanity Studio for rumahmanusia.com. Separate from the site build so Cloudflare Pages never installs these dependencies.",
+  "scripts": {
+    "dev": "sanity dev",
+    "start": "sanity start",
+    "build": "sanity build",
+    "deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sanity": "^4.0.0",
+    "styled-components": "^6.1.0",
+    "@sanity/vision": "^4.0.0"
+  }
+}

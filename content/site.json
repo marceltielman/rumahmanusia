@@ -1,0 +1,121 @@
+{
+  "title": "Rumah Manusia — We Understand Human",
+  "description": "Since 2014 Rumah Manusia has helped organizations across Indonesia through training, coaching, consulting, counselling and assessment grounded in cognitive psychology and cognitive science.",
+  "wordmark": "rumah manusia",
+  "tagline": "We understand human.",
+  "cta": "Request a program",
+  "themeColor": "#00aeef",
+  "email": "layanan@rumahmanusia.com",
+  "whatsapp": "6281990095350",
+  "programColumns": 3,
+  "collapsedPrograms": 15,
+  "autoplayMs": 2200,
+  "quickAsks": [
+    "I would like a program for my team",
+    "Ask about the 2026-27 public schedule",
+    "Ask about online learning and webinars",
+    "Ask about certification programs"
+  ],
+  "contacts": [
+    {
+      "label": "Website",
+      "value": "rumahmanusia.com"
+    },
+    {
+      "label": "Email",
+      "value": "layanan@rumahmanusia.com"
+    },
+    {
+      "label": "WhatsApp",
+      "value": "0819 9009 5350 · 0853 1000 2250"
+    },
+    {
+      "label": "Instagram",
+      "value": "@rumahmanusia"
+    },
+    {
+      "label": "YouTube",
+      "value": "rumah manusia"
+    }
+  ],
+  "offices": [
+    {
+      "city": "Jakarta",
+      "address": [
+        "Wisma Bumiputera Lantai 7 Suite 706",
+        "Jl. Jend. Sudirman kav. 75 Setiabudi, Jakarta Selatan, 12910"
+      ]
+    },
+    {
+      "city": "Bekasi",
+      "address": [
+        "Kemang Pratama Blok K/6",
+        "Bojong Rawalumbu, Kota Bekasi, 17116"
+      ]
+    }
+  ],
+  "footer": {
+    "services": [
+      "Training",
+      "Coaching",
+      "Consulting",
+      "Counselling",
+      "Assessment"
+    ],
+    "explore": [
+      {
+        "label": "Programs",
+        "href": "#programs"
+      },
+      {
+        "label": "Schedule",
+        "href": "#schedule"
+      },
+      {
+        "label": "Online learning",
+        "href": "#online"
+      },
+      {
+        "label": "Clients",
+        "href": "#clients"
+      },
+      {
+        "label": "Team",
+        "href": "#team"
+      }
+    ],
+    "follow": [
+      "rumahmanusia.com",
+      "@rumahmanusia",
+      "rumah manusia training",
+      "@rumah_manusia"
+    ],
+    "legal": "© 2026 Rumah Manusia · Jakarta · Bekasi · layanan@rumahmanusia.com"
+  },
+  "nav": [
+    {
+      "label": "What we do",
+      "href": "#what"
+    },
+    {
+      "label": "Approach",
+      "href": "#strategies"
+    },
+    {
+      "label": "Programs",
+      "href": "#programs"
+    },
+    {
+      "label": "Schedule",
+      "href": "#schedule"
+    },
+    {
+      "label": "Clients",
+      "href": "#clients"
+    },
+    {
+      "label": "Team",
+      "href": "#team"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Cognitive Psychology",
+    "items": [
+      {
+        "name": "Perception",
+        "icon": "eye"
+      },
+      {
+        "name": "Language & communication",
+        "icon": "chat"
+      },
+      {
+        "name": "Attention",
+        "icon": "target"
+      },
+      {
+        "name": "Human intelligence",
+        "icon": "brain"
+      },
+      {
+        "name": "Thinking & problem solving",
+        "icon": "layers"
+      },
+      {
+        "name": "Memory & imagination",
+        "icon": "clock"
+      }
+    ]
+  },
+  {
+    "name": "Cognitive Science",
+    "items": [
+      {
+        "name": "Neuroscience (brain science)",
+        "icon": "activity"
+      },
+      {
+        "name": "Neuro linguistics programming",
+        "icon": "network"
+      },
+      {
+        "name": "Knowledge management & education",
+        "icon": "book"
+      },
+      {
+        "name": "Human excellence",
+        "icon": "award"
+      },
+      {
+        "name": "Cognitive psychology",
+        "icon": "brain"
+      },
+      {
+        "name": "Social science",
+        "icon": "users"
+      }
+    ]
+  }
+]

@@ -1,0 +1,24 @@
+<section class="rm-rise" id="online">
+  <div class="rm-wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:clamp(32px,4vw,56px);align-items:start">
+    <div>
+      {{ m.eyebrow(sections.online.eyebrow) }}
+      <h2 class="rm-h2" style="font-size:34px">{{ sections.online.heading }}</h2>
+      <p class="rm-lead" style="font-size:16px">{{ sections.online.lead }}</p>
+      <div class="grayscale" style="height:240px;margin-top:28px;border-radius:20px;overflow:hidden">{{ m.slot("rm-online", sections.online.slot) }}</div>
+    </div>
+    <div>
+      {{ m.eyebrow(sections.online.modulesLabel) }}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:40px">
+        {%- for item in online.modules %}
+        <div class="rm-card" style="background:var(--color-surface);border-radius:12px;padding:22px 18px;font-family:var(--font-heading);font-weight:400;font-size:17px">{{ item }}</div>
+        {%- endfor %}
+      </div>
+      {{ m.eyebrow(sections.online.webinarsLabel) }}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        {%- for item in online.webinars %}
+        <div class="rm-card" style="background:var(--color-surface);border-radius:12px;padding:22px 18px;font-family:var(--font-heading);font-weight:400;font-size:17px">{{ item }}</div>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>

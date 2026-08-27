@@ -1,0 +1,29 @@
+<section class="rm-rise" id="programs">
+  <div class="rm-wrap">
+    {{ m.eyebrow(sections.programs.eyebrow) }}
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap">
+      <div>
+        <h2 class="rm-h2" style="margin-bottom:10px">{{ sections.programs.heading }}</h2>
+        <p class="text-muted" id="rm-prog-count" style="margin:0;font-size:14px" role="status">{{ site.collapsedPrograms }} of {{ programs.tracks[0].programs | length }} programs</p>
+      </div>
+      <div class="field" style="flex:1 1 260px;min-width:0;max-width:360px">
+        <label for="rm-search">{{ sections.programs.searchLabel }}</label>
+        <input class="input" id="rm-search" type="search" autocomplete="off" placeholder="{{ sections.programs.searchPlaceholder }}">
+      </div>
+    </div>
+    <div class="rm-tabrow" role="tablist" aria-label="Program tracks" data-tabs="track" style="margin-top:28px">
+      {%- for t in programs.tracks %}
+      {{ m.tab("track", loop.index0, t.name) }}
+      {%- endfor %}
+    </div>
+    {%- for t in programs.tracks %}
+    <div class="rm-prog-grid rm-tabpanel" role="tabpanel" id="rm-track-{{ loop.index0 }}" aria-labelledby="rm-track-tab-{{ loop.index0 }}" style="margin-top:24px"{% if not loop.first %} hidden{% endif %}>
+      {%- for p in t.programs %}
+      <div class="rm-row rm-prog" data-name="{{ p | lower }}"><span class="rm-prog-no">{{ loop.index | pad }}</span><span class="rm-prog-name">{{ p }}</span></div>
+      {%- endfor %}
+    </div>
+    {%- endfor %}
+    <p class="text-muted" id="rm-prog-empty" style="margin-top:16px;font-size:14px" data-note="{{ sections.programs.emptyNote }}"></p>
+    <button type="button" class="btn btn-secondary" id="rm-prog-toggle" data-collapsed="{{ site.collapsedPrograms }}" style="margin-top:8px">Show all {{ programs.tracks[0].programs | length }} programs</button>
+  </div>
+</section>
