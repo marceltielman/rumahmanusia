@@ -19,8 +19,11 @@ const BASE_DELAY_MS = 450;
         <div style="flex:0 1 240px;min-width:200px">
           <div class="rm-founder">
             @if (team.founder.photo) {
+              <!-- Responsive units only: NgOptimizedImage rejects pixel values in
+                   sizes (NG02952). The frame is capped at 260px, so the
+                   wide-viewport value is deliberately small. -->
               <img [ngSrc]="team.founder.photo" [alt]="team.founder.name"
-                   width="260" height="260" sizes="260px">
+                   width="260" height="260" sizes="(max-width: 700px) 60vw, 18vw">
             }
           </div>
           <h4 style="margin:18px 0 4px;font-weight:500">{{ team.founder.name }}</h4>
@@ -33,7 +36,7 @@ const BASE_DELAY_MS = 450;
               <div class="rm-face" [style.animation-delay.ms]="face.delay">
                 @if (face.photo) {
                   <img [ngSrc]="face.photo" [alt]="face.name"
-                       width="144" height="144" sizes="(max-width: 1040px) 20vw, 72px">
+                       width="144" height="144" sizes="(max-width: 1040px) 20vw, 8vw">
                 }
               </div>
             }
