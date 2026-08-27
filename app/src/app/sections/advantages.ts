@@ -15,8 +15,8 @@ import { Icon } from '../ui/icon';
         @for (item of advantages; track item.num) {
           <div class="rm-card rm-panelcard">
             <div style="display:flex;align-items:center;gap:12px">
-              <svg [rmIcon]="item.icon" stroke="var(--color-accent-2-700)"></svg>
-              <span style="font-family:var(--font-heading);font-weight:500;font-size:22px;color:var(--color-accent-2-700);line-height:1">{{ item.num }}</span>
+              <svg [rmIcon]="item.icon" stroke="var(--color-accent-2-800)"></svg>
+              <span style="font-family:var(--font-heading);font-weight:500;font-size:22px;color:var(--color-accent-2-800);line-height:1">{{ item.num }}</span>
             </div>
             <h4 class="rm-cardtitle" style="margin:14px 0 10px">{{ item.title }}</h4>
             <p class="rm-cardbody">{{ item.body }}</p>

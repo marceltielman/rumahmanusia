@@ -24,11 +24,21 @@
   --color-accent-2-800: #4d6318;
   --color-accent-2-900: #354312;
 }
+  /* Text on the brand cyan. Deliberately a fixed dark ink rather than
+     var(--color-text): the cyan does not change between themes, so a theme
+     token would invert to light in dark mode and drop to 2.2:1. Ink holds
+     4.5:1 or better across the button's rest, hover and active shades. */
+  :root { --color-on-accent: #201e1d; }
+  /* The closing band is an inverted panel: white text on deep brand blue.
+     Fixed rather than tokenised, because the dark theme inverts accent-700
+     and accent-800 into light blues, which would put white text on a pale
+     background. The band reads identically in both themes by design. */
+  :root { --color-band: #00719b; --color-band-ink: #005273; }
 :root { --radius-sm: 8px; --radius-md: 12px; --radius-lg: 20px; --color-divider: #e3e6e8; }
 .btn { border-radius: 12px; padding: 10px 18px; }
-.btn-primary { background: var(--color-accent); color: #ffffff; }
-.btn-primary:hover { background: var(--color-accent-600); color: #ffffff; }
-.btn-primary:active { background: var(--color-accent-700); color: #ffffff; }
+.btn-primary { background: var(--color-accent); color: var(--color-on-accent); }
+.btn-primary:hover { background: var(--color-accent-600); color: var(--color-on-accent); }
+.btn-primary:active { background: var(--color-accent-700); color: var(--color-on-accent); }
 .input { border-radius: 10px; }
 .tag { border-radius: 999px; }
 .tag-accent { background: var(--color-accent-2-200); color: var(--color-accent-2-800); }
@@ -135,7 +145,7 @@
 
 /* quote arrows */
 .rm-arrow { transition: transform 300ms cubic-bezier(.2,.7,.2,1), background 240ms ease, border-color 240ms ease; }
-.rm-arrow:hover { background: var(--color-accent) !important; border-color: var(--color-accent) !important; color: #ffffff !important; transform: scale(1.08); }
+.rm-arrow:hover { background: var(--color-accent) !important; border-color: var(--color-accent) !important; color: var(--color-on-accent) !important; transform: scale(1.08); }
 
 /* sticky header shrink on scroll */
 .rm-head { transition: min-height 300ms cubic-bezier(.2,.7,.2,1), box-shadow 300ms ease, background 300ms ease; }
@@ -221,12 +231,12 @@ html, body { transition: background 320ms ease, color 320ms ease; }
 .rm-fab { position: fixed; right: clamp(16px,3vw,28px); bottom: clamp(16px,3vw,28px); z-index: 120; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
 .rm-fabcard { width: 300px; max-width: calc(100vw - 40px); background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 20px; box-shadow: 0 22px 54px -26px rgba(0,60,90,0.45); overflow: hidden; transform-origin: bottom right; opacity: 0; transform: translateY(12px) scale(0.94); visibility: hidden; transition: opacity 280ms cubic-bezier(.2,.7,.2,1), transform 320ms cubic-bezier(.16,.84,.24,1), visibility 320ms; }
 .rm-fab[data-open="true"] .rm-fabcard { opacity: 1; transform: none; visibility: visible; }
-.rm-fabbtn { width: 58px; height: 58px; border-radius: 999px; border: 0; cursor: pointer; background: #25d366; display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 30px -12px rgba(37,211,102,0.7); transition: transform 300ms cubic-bezier(.16,.84,.24,1), box-shadow 260ms ease; }
+.rm-fabbtn { width: 58px; height: 58px; border-radius: 999px; border: 0; cursor: pointer; background: #128c7e; display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 30px -12px rgba(18,140,126,0.7); transition: transform 300ms cubic-bezier(.16,.84,.24,1), box-shadow 260ms ease; }
 .rm-fabbtn:hover { transform: scale(1.07); }
 .rm-fabbtn:active { transform: scale(0.96); }
 .rm-fabbtn svg { transition: transform 320ms cubic-bezier(.16,.84,.24,1); }
 .rm-fab[data-open="true"] .rm-fabbtn svg { transform: rotate(90deg) scale(0.9); }
-.rm-fabpulse { position: absolute; inset: 0; border-radius: 999px; background: #25d366; opacity: 0.55; animation: rm-fabping 2400ms cubic-bezier(.2,.7,.2,1) infinite; }
+.rm-fabpulse { position: absolute; inset: 0; border-radius: 999px; background: #128c7e; opacity: 0.55; animation: rm-fabping 2400ms cubic-bezier(.2,.7,.2,1) infinite; }
 @keyframes rm-fabping { 0% { transform: scale(1); opacity: 0.5; } 70% { transform: scale(1.7); opacity: 0; } 100% { transform: scale(1.7); opacity: 0; } }
 .rm-fab[data-open="true"] .rm-fabpulse { display: none; }
 .rm-quick { display: block; width: 100%; text-align: left; background: var(--color-surface); border: 0; border-radius: 12px; padding: 12px 14px; cursor: pointer; font-family: var(--font-body); font-size: 14px; color: var(--color-text); transition: background 200ms ease, transform 240ms cubic-bezier(.2,.7,.2,1); }
@@ -247,6 +257,10 @@ a { color: var(--color-accent-700); text-decoration: none; }
 a:hover { color: var(--color-accent); text-decoration: underline; }
 section[id] { scroll-margin-top: 84px; }
 
+/* Muted text sat at 4.2:1 on the dark ground. Pinned to a ramp step that
+   clears 4.5:1 in both themes rather than a translucent mix. */
+.text-muted { color: var(--color-neutral-700); }
+
 /* ══════════════════════════════════════════════════════════════════════════
    Page components. The canvas source carried these as repeated inline styles;
    the values are unchanged, just named. One-off styles stay inline.
@@ -256,7 +270,7 @@ section[id] { scroll-margin-top: 84px; }
 
 /* — section scaffolding — */
 .rm-wrap { max-width: 1120px; margin: 0 auto; padding: clamp(52px,7vw,96px) clamp(20px,4vw,40px); }
-.rm-eyebrow { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-2-700); margin: 0 0 18px; }
+.rm-eyebrow { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-2-800); margin: 0 0 18px; }
 .rm-h2 { font-size: clamp(27px,3.6vw,40px); line-height: 1.14; letter-spacing: -0.02em; font-weight: 500; margin: 0 0 18px; max-width: 24ch; text-wrap: pretty; }
 .rm-lead { font-size: 18px; line-height: 1.6; color: var(--color-neutral-800); max-width: 62ch; margin: 0; }
 .rm-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: 16px; }
@@ -264,7 +278,7 @@ section[id] { scroll-margin-top: 84px; }
 /* — cards — */
 .rm-panelcard { background: var(--color-surface); border-radius: 16px; padding: 28px 26px 32px; }
 .rm-cardhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-.rm-cardnum { font-size: 11px; letter-spacing: 0.14em; color: var(--color-neutral-600); }
+.rm-cardnum { font-size: 11px; letter-spacing: 0.14em; color: var(--color-neutral-700); }
 .rm-cardtitle { margin: 0 0 10px; font-weight: 500; }
 .rm-cardbody { font-size: 15px; margin: 0; color: var(--color-neutral-800); }
 
@@ -279,7 +293,7 @@ section[id] { scroll-margin-top: 84px; }
 .rm-stat-l { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 10px; color: var(--color-neutral-700); }
 
 /* — image placeholders — drop an <img> in to fill one — */
-.rm-slot { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; background: var(--color-surface); border: 1px dashed var(--color-neutral-400); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-neutral-600); }
+.rm-slot { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; background: var(--color-surface); border: 1px dashed var(--color-neutral-400); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-neutral-700); }
 .rm-slot:has(img) { padding: 0; border: 0; }
 .rm-slot img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -292,7 +306,7 @@ section[id] { scroll-margin-top: 84px; }
 
 /* — tabs — */
 .rm-tab { font-family: var(--font-heading); font-weight: 500; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 12px 20px; border: 1px solid var(--color-divider); border-radius: 999px; background: transparent; color: var(--color-text); }
-.rm-tab[aria-selected="true"] { background: var(--color-accent); }
+.rm-tab[aria-selected="true"] { background: var(--color-accent); color: var(--color-on-accent); }
 .rm-tabrow { display: flex; gap: 8px; }
 
 /* — program catalogue — */
@@ -303,7 +317,7 @@ section[id] { scroll-margin-top: 84px; }
 
 /* — schedule — */
 .rm-mpill { flex: 0 0 auto; font-family: var(--font-heading); font-weight: 500; font-size: 13px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--color-divider); cursor: pointer; white-space: nowrap; background: var(--color-bg); color: var(--color-text); }
-.rm-mpill[aria-selected="true"] { background: var(--color-accent); color: #ffffff; }
+.rm-mpill[aria-selected="true"] { background: var(--color-accent); color: var(--color-on-accent); }
 .rm-monthlabel { font-family: var(--font-heading); font-weight: 500; font-size: clamp(32px,4vw,44px); line-height: 1; letter-spacing: -0.03em; }
 .rm-metalabel { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-neutral-700); }
 .rm-topics { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-divider); }
