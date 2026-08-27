@@ -10,8 +10,9 @@
     "serve:ssr:app": "node dist/app/server/server.mjs",
     "sync:static": "node tools/sync-static.mjs",
     "fetch:content": "node tools/fetch-content.mjs",
-    "prebuild": "npm run sync:static && npm run fetch:content",
-    "prestart": "npm run sync:static && npm run fetch:content"
+    "prebuild": "npm run sync:static && npm run seo:files && npm run fetch:content",
+    "prestart": "npm run sync:static && npm run seo:files && npm run fetch:content",
+    "seo:files": "node tools/generate-seo-files.mjs"
   },
   "private": true,
   "packageManager": "npm@11.13.0",
