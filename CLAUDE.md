@@ -4,118 +4,159 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A static, single-page marketing site for Rumah Manusia (Indonesian training / coaching /
-consulting firm), implemented from a Claude Design canvas. There is **no build step, no
-package manager, no test suite, and no framework** — plain HTML, CSS and one vanilla JS file.
+A single-page marketing site for Rumah Manusia (Indonesian training / coaching /
+consulting firm), built as a **prerendered Angular 22 application**. Content lives
+in **Sanity**; the build fetches it and bakes it into static HTML. Output is plain
+files — no server runtime — deployed to Cloudflare Pages.
 
 ```
-index.html          all markup and all content (single page, ~1200 lines, generated once then hand-maintained)
-assets/styles.css   the "Modernist" design-system layer — tokens + .btn/.card/.tag/.input primitives
-assets/site.css     page layer — brand token overrides, all motion, and page component classes
-assets/app.js       behavior only — contains no content
-team/*.png          founder + 27 trainer portraits (200×200)
-favicon.png, apple-touch-icon.png
-.import/            fetched copy of the canvas source (reference only, not served)
+app/         the Angular application (its own package.json)
+studio/      Sanity Studio (its own package.json, so the site build never installs React)
+content/     seed/mirror of the Sanity content as JSON — NOT what the site reads
+assets/      shared stylesheets and brand marks; source of truth, copied into app/ at build
+team/        original portrait files, uploaded to Sanity by studio/scripts/upload-team.mjs
+tools/       one-off extraction and asset scripts
 ```
 
 ## Commands
 
+Root scripts delegate into the sub-packages:
+
 ```sh
-python3 -m http.server 8000        # serve; open http://localhost:8000
+npm install          # also installs app/ via postinstall
+npm run build        # prebuild syncs assets + fetches Sanity, then prerenders
+npm start            # dev server
+npm test             # Vitest
+npm run studio       # Sanity Studio locally
+npm run studio:deploy
 ```
 
-Relative paths (`assets/`, `team/`, `favicon.png`) mean it must be served over HTTP, not
-opened as `file://`. Deploy by copying the repo root as-is.
+Studio deps are separate: `npm --prefix studio install` when you need them.
+
+Cloudflare Pages: build `npm run build`, output directory `app/dist/app/browser`.
 
 ## Provenance
 
-The design source of truth is the Claude Design project
-`43ab0bc8-86fd-4349-a864-0acf95a5691f`, file `Rumah Manusia v5 motion.dc.html`. Read it with
-the `DesignSync` MCP tool (`get_file`); `.import/v5-motion.dc.html` is a local copy.
+Originally a Claude Design canvas — project `43ab0bc8-86fd-4349-a864-0acf95a5691f`,
+file `Rumah Manusia v5 motion.dc.html`, readable via the `DesignSync` MCP tool.
+That file runs on the design-canvas React runtime and is **not** a port target;
+compare behaviour and computed values against it, never markup shape.
 
-That canvas file runs on the design-canvas React runtime (`<x-dc>` template, `sc-for`/`sc-if`,
-`{{ }}` bindings, a `DCLogic` component class). **This repo is a re-implementation, not a
-port** — the runtime, `support.js` and `image-slot.js` are deliberately not shipped. When
-reconciling against the design, compare *behavior and computed values*, not markup shape.
+`assets/styles.css` is the "Modernist" design system, synced from that project.
+Treat it as generated: put overrides in `assets/site.css` or a design re-sync
+clobbers them.
 
-`assets/styles.css` is the design system verbatim from the canvas project. Treat it as synced
-output: put page-level overrides in `site.css` rather than retuning tokens here, or a future
-design sync will clobber them.
+**An Eleventy implementation of the same page exists on branch `feat/eleventy`**
+(frozen at commit `49f2807`). It reached full parity before Angular was adopted.
+Useful as a reference for expected behaviour; do not maintain both.
 
-## Architecture
+## Content
 
-**Content lives in HTML, never in JS.** Every state of every dynamic section is rendered
-statically and JS toggles the `hidden` attribute. Consequences worth knowing before editing:
+**Sanity is the source of truth. `content/*.json` is not.**
 
-- Adding a program, month, quote, client or trainer is an **HTML-only** edit. `app.js` derives
-  labels and counts from the DOM — month names from the pill button text, topic counts from
-  `<ul>` child count, program search from `.rm-prog[data-name]` (lowercased), quote count from
-  `.rm-quote` siblings.
-- `site.css` needs `[hidden] { display: none !important }` because the component classes set
-  `display: flex/grid`, which would otherwise win over `[hidden]`.
-- Tabs are generic: a `[role="tablist"][data-tabs="..."]` whose `[role="tab"]` buttons point at
-  panels via `aria-controls`. Three groups use it (`strategy`, `audience`, `track`).
+- `app/tools/fetch-content.mjs` runs before every build, queries Sanity, resolves
+  image fields to CDN URLs, excludes drafts, and writes `app/src/content/content.json`.
+- That file is gitignored and generated. `ContentService` exposes it.
+- `content/*.json` at the repo root is the original seed and a readable mirror.
+  `tools/make-sanity-import.mjs` regenerates an NDJSON import from it.
+- Editing content means editing in Studio, then rebuilding. Editing the JSON files
+  changes nothing the site serves.
+- Project `k01eodu7`, dataset `production`, **publicly readable** — so no build
+  token is needed, but drafts must stay excluded (they are, in the GROQ).
+- 13 singleton documents, one per content area, addressed by fixed `_id`. Studio's
+  desk lists them explicitly and create/duplicate/delete are removed, so a section
+  cannot be cloned or lost.
+- Icons are chosen from a **named list**, never pasted SVG paths. The names must
+  match across `app/src/app/ui/icons.ts` and `studio/schemaTypes/_helpers.js`.
 
-### Motion contract (the main source of coupling)
+## Architecture rules that are load-bearing
 
-Scroll reveal, staggering and the team-photo effect are split across all three files, so a
-structural edit in `index.html` can silently break animation:
+### Attribute selectors, not element selectors
 
-- Sections opt in with `class="rm-rise"`; `app.js` adds `.rm-in` via IntersectionObserver.
-- `site.css` staggers `.rm-rise > *` with `:nth-child(1..5)` and starts them at `opacity: 0`.
-  **Each `.rm-rise` section must keep exactly one direct child wrapper** (the `.rm-wrap` div) —
-  adding a second direct child makes it animate as a separate stagger step.
-- `.rm-hero > *:nth-child(1..5)` delays assume the hero's five children in order.
-- `.rm-face img` starts at `opacity: 0` and is only made visible by the `rm-resolve` scan
-  animation, which requires the ancestor `.rm-rise.rm-in`. Team photos are invisible until the
-  section reveals. The diagonal wipe comes from per-face inline `animation-delay`.
-- The canvas restarted animations by alternating duplicate keyframe names on re-render. Here
-  `app.js` restarts them explicitly with a `replay(el, anim)` helper, so the duplicates
-  (`rm-in-b`, `rm-t-b`, `rm-q-a2`, `rm-q-b2`) were removed. If you add a state change that
-  should re-animate, call `replay()` — don't reintroduce paired keyframes.
-- Everything is guarded by `prefers-reduced-motion: reduce`; keep new motion guarded too.
+Components use `section[rmHero]`, not `<rm-hero>`. This is not style: the
+stylesheet staggers `.rm-rise > *` by `:nth-child`, so a component host element
+between the section and its wrapper shifts every index and **breaks the reveal
+animation on every section**. Keep new sections on native elements.
+
+### Panels stay in the DOM
+
+Tab panels, month topic lists and testimonials use `[hidden]`, never `@if`. `@if`
+would leave the 18 hard-skills programs and the second strategy panel out of the
+prerendered HTML — an SEO and no-JS regression. `site.css` therefore needs
+`[hidden] { display: none !important }`, because the component classes set
+`display: flex/grid`.
+
+### Paired keyframes
+
+Re-applying the same CSS animation does not replay it, so entrance animations
+alternate between two identical keyframes (`rm-t-a`/`rm-t-b`, `rm-in-a`/`rm-in-b`,
+`rm-q-a1`/`rm-q-a2`). `app/src/app/ui/anim.ts` picks the name from a tick counter.
+Do not "simplify" the duplicates away — a framework-rendered page needs them.
+
+### Reveal hides content when it breaks
+
+Sections start at `opacity: 0` and are revealed by `RevealService` adding `.rm-in`.
+It has three failsafes (immediate reveal near the viewport, a 600 ms sweep, and a
+no-IntersectionObserver fallback) precisely because a failure makes content
+invisible rather than merely unanimated. Team portraits additionally start at
+`opacity: 0` and only appear via the `rm-resolve` scan, which requires the
+ancestor `.rm-rise.rm-in`.
+
+### Colours on the brand cyan must be fixed, not themed
+
+`--color-on-accent` and `--color-band` are deliberately **not** overridden in the
+dark theme. The cyan does not change between themes, so a theme token inverts to
+light and drops to ~2.2:1. The dark theme also inverts `accent-700`/`accent-800`
+into light blues — never use those as a background for white text. See the WCAG
+notes below before touching any colour.
 
 ### Theme
 
-Dark mode is opt-in via `html[data-theme="dark"]`, whose token overrides live at the end of the
-brand block in `site.css`. An inline script in `<head>` resolves the theme from
-`localStorage["rm-theme"]` (falling back to `prefers-color-scheme`) **before first paint** to
-avoid a white flash; `app.js` only handles the toggle button. No `prefers-color-scheme` media
-query styles the page — the attribute is the single switch.
+Resolved by an inline script in `app/src/index.html` **before first paint** from
+`localStorage["rm-theme"]`, so a dark reload never flashes white. `ThemeService`
+adopts whatever that script decided and owns the toggle only.
 
-### Fixed values carried over from the canvas
+## Verification expectations
 
-The canvas exposed editable props; those defaults are now hard-coded and appear in more than
-one place:
+- **Test the dev server, not just `ng build`.** Angular strips development-mode
+  assertions from production bundles. An `NgOptimizedImage` misuse (NG02952) once
+  shipped a clean production build while `ng serve` would not boot at all.
+- **Audit AXE in both themes.** A light-mode-only audit missed that the selected
+  tab failed at 2.22:1 in dark mode.
+- **Disable transitions before auditing contrast.** Sampling mid-fade makes AXE
+  report blended colours and phantom failures. Force opacity only on the reveal
+  wrappers, not globally, or you mask genuinely translucent text.
+- Structural parity counts worth re-checking after markup edits: 69 program rows
+  (one title is duplicated in the source data), 60 client pills, 40 marquee tiles,
+  27 faces, 14 months, 14 quotes, 13 reveal sections, 6 tab panels, 50 topic items.
 
-- Program grid `347px` column min (`site.css` `.rm-prog-grid`) — was `round(1040 / 3)` columns.
-- Program collapse threshold: **15** rows (`app.js` and the initial count text in `index.html`).
-- Schedule timeline geometry: `x = 40 + i * (1000/13)` over a `0 0 1080 150` viewBox; bars are
-  `x = 4 + i*14`, `height = topics * 10` in a `0 0 200 60` viewBox. Both are baked into the
-  generated SVG — recompute if the month count changes from 14.
-- Autoplay steps one month every 2200 ms.
+## Plugin gates in this repo
+
+The `frontend-dev` plugin enforces two hooks on Angular edits: a task file under
+`.claude/tasks/todo-*.md` with an agreed plan, and an invocation of
+`/frontend-dev:pipeline` before editing code. The pipeline also mandates the
+`playwright-cli` skill for browser testing and forbids the Playwright MCP tools.
+Expect to be blocked mid-edit otherwise.
 
 ## Known gaps
 
-- **`assets/app.js` is not written yet.** `index.html` already loads it, so the page currently
-  renders complete and readable but is inert: no scroll reveal (sections stay at `opacity: 0`
-  past the fold), no theme toggle, no tabs, no search, no carousel. The head script still sets
-  the theme. This is the next piece of work; the contract it must satisfy is the Architecture
-  section above.
-- `team/founder.png` is a 205×205 head-and-shoulders **crop recovered from a truncated
-  download** — the original exceeds `DesignSync get_file`'s 256 KiB cap. Replace it with the
-  full-resolution original when available.
-- `.rm-slot` elements are empty photo placeholders (hero ×2, formats ×3, online ×1). They
-  replace the canvas's `<image-slot>` component, which had no filled images. Drop an `<img>`
-  inside a `.rm-slot` to fill one; `.rm-slot:has(img)` removes the dashed frame.
-- The client marquee hotlinks `google.com/s2/favicons` for logos, as the canvas did. Self-host
-  if that matters.
-- `HARD_PROGRAMS` contains "DEBT RESTRUCTURING" twice — present in the design source, kept
-  verbatim so the 69-program count in the copy still holds.
-
-## Not applicable here
-
-This repo has no `workflow/` directory, so the multi-agent sprint contract in
-`~/.claude/CLAUDE.md` does not apply. There is no Angular or Go toolchain either, so the
-`frontend-dev` plugin pipelines (`/frontend-dev:pipeline`, `ng-*`, `go-*`) have nothing to run
-against — its SessionStart hook nags for orchestration sections that this project does not need.
+- **Six image placeholders are empty** (hero ×2, formats ×3, online ×1). They
+  render as dashed frames with their captions. Fill them by uploading in Studio;
+  `rm-slot` swaps to the image automatically.
+- **`team/founder.png` is a 205×205 crop recovered from a truncated download** —
+  the original exceeds `DesignSync get_file`'s 256 KiB cap. Replace when available.
+- **The contact form only opens a mail client.** No server-side delivery, which on
+  mobile and webmail often means the enquiry is simply lost. Cloudflare Pages has
+  no PHP, so this needs a Pages Function plus an email API.
+- **No Open Graph tags**, despite the whole CTA strategy being WhatsApp shares.
+- **No `robots.txt`, `sitemap.xml` or JSON-LD.**
+- **Client marquee logos hotlink `google.com/s2/favicons`** and two already 404.
+  Sanity has a `logo` field per featured client; uploading one overrides the
+  fallback.
+- **`HARD_PROGRAMS` contains "DEBT RESTRUCTURING" twice** — present in the design
+  source, kept so the "69 programs" copy stays true.
+- **Deferred optimisation:** the seven static sections could use
+  `@defer (hydrate never)` to keep their templates and content out of the 92 KB
+  client bundle. Blocked because `rmReveal` must run client-side; a never-hydrated
+  section would stay at `opacity: 0` and its content would be invisible. Doing it
+  safely means moving reveal to a shell-level service that queries the DOM.

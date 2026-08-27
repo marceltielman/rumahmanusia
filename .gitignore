@@ -1,5 +1,5 @@
 # Build output
-_site/
+app/dist/
 studio/dist/
 
 # Dependencies — package-lock.json IS committed so Cloudflare builds are

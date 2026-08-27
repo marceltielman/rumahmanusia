@@ -1,4 +1,8 @@
 /* One-off: derive the brandmark from the full Rumah Manusia lockup.
+ *
+ * Already run; assets/logo-mark.png and logo-full.png are committed. Kept as a
+ * record of how they were produced. Needs sharp, which used to arrive with the
+ * Eleventy image plugin — to re-run it, `npm i --no-save sharp` first.
  * The lockup stacks the symbol above a "rumah manusia" wordmark; the header,
  * loader and footer each place it beside a text wordmark, so only the symbol
  * is wanted. Run: node tools/make-logo.mjs <source.png>

@@ -2,15 +2,15 @@
   "name": "rumah-manusia",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "description": "Rumah Manusia — single-page site. Content in content/*.json, built with Eleventy.",
+  "description": "Rumah Manusia — single-page site. Angular app in app/, Sanity Studio in studio/, content mirrored in content/.",
   "scripts": {
-    "build": "eleventy",
-    "serve": "eleventy --serve",
-    "clean": "rm -rf _site"
-  },
-  "devDependencies": {
-    "@11ty/eleventy": "^3.1.6",
-    "@11ty/eleventy-img": "^7.0.0"
+    "postinstall": "npm --prefix app install",
+    "build": "npm --prefix app run build",
+    "start": "npm --prefix app start",
+    "test": "npm --prefix app test",
+    "studio": "npm --prefix studio run dev",
+    "studio:deploy": "npm --prefix studio run deploy",
+    "content:fetch": "npm --prefix app run fetch:content",
+    "content:seed": "node tools/make-sanity-import.mjs"
   }
 }
