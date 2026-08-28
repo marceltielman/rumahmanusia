@@ -112,7 +112,43 @@ would be invisible. Doing it safely means moving reveal from a per-section
 directive to a shell-level service that queries the DOM, as the vanilla build
 did. Get it wrong and content disappears — verify with the no-JavaScript suite.
 
-### 10. Content decisions for a human
+### 10. Multi-language — considered, not planned
+
+Raised 2026-08-28 and left as an option. Notes so the thinking is not repeated:
+
+**Angular's built-in i18n does very little here.** It localizes hardcoded
+template strings, and almost nothing on this page is hardcoded — it all comes
+from Sanity. The work is in the content layer, not the framework.
+
+Shape if it is ever wanted:
+
+- Sanity text fields become localized (`internationalized-array`, or a
+  `{ id, en }` object per field). This touches most fields across all 13
+  documents and is the bulk of the engineering.
+- Prerender two routes, `/` and `/en/`, passing a locale into the content fetch.
+  Angular's prerenderer handles multiple routes.
+- `hreflang` alternates, `og:locale:alternate`, both URLs in the sitemap, a
+  switcher in the header, and the ~10 genuinely hardcoded strings ("Sending…",
+  "Show all N programs", "topics", aria-labels) moved to a locale dictionary.
+
+Roughly 1–2 days of engineering. **The expensive part is translation**, and it
+is not an engineering task: 69 program names, every heading, all body copy.
+Machine-translated marketing copy would read badly to precisely the audience a
+human-skills training firm is trying to persuade.
+
+**The prior question is which language should be primary.** The page is English
+while all fourteen testimonials are Indonesian and the clients are Indonesian
+ministries and banks — a mix that reads as unintentional. An Indonesian-first
+site would plausibly convert better, with English as the secondary. Switching
+outright is a content job in Studio: no schema change, no routing, no second
+copy to keep in sync forever.
+
+**Nothing to do now.** The content model is clean and localizing it later is a
+contained change. Adding a half-used second locale before translations exist
+would only be scaffolding, and a bilingual site doubles the editorial burden
+permanently.
+
+### 11. Content decisions for a human
 
 - **`HARD_PROGRAMS` lists "DEBT RESTRUCTURING" twice.** In the design source.
   The "69 programs" copy depends on the duplicate; fixing it makes the number 68.
