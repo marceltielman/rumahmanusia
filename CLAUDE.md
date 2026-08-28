@@ -18,6 +18,20 @@ team/        original portrait files, uploaded to Sanity by studio/scripts/uploa
 tools/       one-off extraction and asset scripts
 ```
 
+## Deployed
+
+| | |
+|---|---|
+| Site | https://rumahmanusia.pages.dev/ — Cloudflare **Pages**, builds on push to `main` |
+| Studio | https://rumahmanusia.sanity.studio/ |
+| Publish → rebuild | Sanity webhook → Cloudflare deploy hook, working |
+
+It is a **Pages** project, not a Worker. `functions/` file-based routing is what
+serves `/api/enquiry`; a `wrangler.jsonc` with a Worker entry was tried and is
+ignored by Pages. `_headers` and `404.html` are picked up automatically.
+
+Outstanding work is tracked in `.claude/tasks/todo-launch-remaining.md`.
+
 ## Commands
 
 Root scripts delegate into the sub-packages:
@@ -110,6 +124,22 @@ light and drops to ~2.2:1. The dark theme also inverts `accent-700`/`accent-800`
 into light blues — never use those as a background for white text. See the WCAG
 notes below before touching any colour.
 
+### Without JavaScript the page must be forced visible
+
+`<html class="no-js">` is removed by the pre-paint script; `site.css` has
+`.no-js` rules that hide the loading overlay and force the revealed sections,
+hero and portraits opaque.
+
+This is not cosmetic. The overlay is `position: fixed; inset: 0` and only
+dismisses when script sets `data-done`; every `.rm-rise` section sits at
+`opacity: 0` awaiting `.rm-in`; the hero's animations are `paused` awaiting
+`.rm-lit`. Without those rules the page renders **complete in the markup and
+blank on screen** — which is exactly how it shipped until it was caught, because
+the check had only asserted content was in the DOM, never that it was visible.
+
+A `<noscript><style>` block does **not** work here: the build's critical-CSS
+pass escapes its contents into literal text.
+
 ### Theme
 
 Resolved by an inline script in `app/src/index.html` **before first paint** from
@@ -140,21 +170,28 @@ Expect to be blocked mid-edit otherwise.
 
 ## Known gaps
 
+Fixed since this file was first written: the enquiry form now delivers
+server-side, Open Graph and JSON-LD are present, and `robots.txt` / `sitemap.xml`
+exist. What remains:
+
 - **Six image placeholders are empty** (hero ×2, formats ×3, online ×1). They
-  render as dashed frames with their captions. Fill them by uploading in Studio;
-  `rm-slot` swaps to the image automatically.
+  render as dashed frames with their captions. Upload in Studio and `rm-slot`
+  swaps to the image.
 - **`team/founder.png` is a 205×205 crop recovered from a truncated download** —
-  the original exceeds `DesignSync get_file`'s 256 KiB cap. Replace when available.
-- **The contact form only opens a mail client.** No server-side delivery, which on
-  mobile and webmail often means the enquiry is simply lost. Cloudflare Pages has
-  no PHP, so this needs a Pages Function plus an email API.
-- **No Open Graph tags**, despite the whole CTA strategy being WhatsApp shares.
-- **No `robots.txt`, `sitemap.xml` or JSON-LD.**
+  the original exceeds `DesignSync get_file`'s 256 KiB cap.
+- **The enquiry Function is live but not configured.** It needs
+  `RESEND_API_KEY`, `ENQUIRY_TO` and `ENQUIRY_FROM` in Pages. Until then it
+  reports "not configured" and the form offers an email fallback — deliberately,
+  rather than failing silently.
+- **No Content Security Policy.** Skipped because it cannot be verified without
+  a deploy and an untested one breaks the page silently. Now doable against a
+  preview.
 - **Client marquee logos hotlink `google.com/s2/favicons`** and two already 404.
-  Sanity has a `logo` field per featured client; uploading one overrides the
-  fallback.
-- **`HARD_PROGRAMS` contains "DEBT RESTRUCTURING" twice** — present in the design
-  source, kept so the "69 programs" copy stays true.
+  Sanity has a `logo` field per featured client which overrides the fallback.
+- **`HARD_PROGRAMS` contains "DEBT RESTRUCTURING" twice** — present in the
+  design source, kept so the "69 programs" copy stays true.
+- **No 301s from the old WordPress URLs.** Needs the old URL list; implement as
+  `app/public/_redirects`.
 - **Deferred optimisation:** the seven static sections could use
   `@defer (hydrate never)` to keep their templates and content out of the 92 KB
   client bundle. Blocked because `rmReveal` must run client-side; a never-hydrated
