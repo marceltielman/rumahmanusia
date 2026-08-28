@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
   FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { ContentService } from '../content/content.service';
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const ENDPOINT = '/api/enquiry';
+
+type State = 'idle' | 'sending' | 'sent' | 'failed';
 
 @Component({
   selector: 'section[rmContact]',
@@ -35,17 +38,43 @@ const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
       <div style="background:var(--color-surface);border-radius:24px;padding:clamp(24px,3vw,36px)">
         <h4 style="margin:0 0 20px;font-weight:500">{{ copy.formTitle }}</h4>
-        <form [formGroup]="form" (ngSubmit)="submit()">
+
+        <!-- Real action and method, so a submit without JavaScript is a normal
+             POST that the Function answers with a readable page. -->
+        <form [formGroup]="form" method="post" [action]="endpoint" (ngSubmit)="submit($event)">
           @for (field of copy.fields; track field.name) {
             <div class="field" style="margin-bottom:16px">
               <label [for]="'rm-' + field.name">{{ field.label }}</label>
               <input class="input" [id]="'rm-' + field.name" [formControlName]="field.name"
-                     [type]="field.type" [attr.placeholder]="field.placeholder ?? null"
-                     [attr.required]="field.required ? '' : null">
+                     [name]="field.name" [type]="field.type"
+                     [attr.placeholder]="field.placeholder ?? null"
+                     [attr.required]="field.required ? '' : null"
+                     [attr.aria-invalid]="state() === 'failed' ? 'true' : null">
             </div>
           }
-          <button type="submit" class="btn btn-primary btn-block">{{ site.cta }}</button>
-          <p role="status" style="margin-top:14px;font-size:13px;color:var(--color-accent-700);min-height:20px">{{ note() }}</p>
+
+          <!-- Spam signals. The honeypot is hidden from people and from
+               assistive technology; a bot fills every field it finds. -->
+          <div hidden aria-hidden="true">
+            <label for="rm-company-website">Company website</label>
+            <input id="rm-company-website" name="company_website" type="text"
+                   tabindex="-1" autocomplete="off">
+          </div>
+          <input type="hidden" name="rendered_at" [value]="renderedAt">
+
+          <button type="submit" class="btn btn-primary btn-block" [disabled]="state() === 'sending'">
+            {{ buttonLabel() }}
+          </button>
+
+          <p role="status" aria-live="polite"
+             style="margin-top:14px;font-size:13px;min-height:20px"
+             [style.color]="state() === 'failed' ? 'var(--color-accent-700)' : 'var(--color-accent-700)'">{{ note() }}</p>
+
+          @if (state() === 'failed') {
+            <p style="margin:0;font-size:13px">
+              <a [href]="mailtoFallback()">Send it by email instead</a>
+            </p>
+          }
         </form>
       </div>
     </div>
@@ -55,7 +84,15 @@ export class Contact {
   private readonly content = inject(ContentService);
   protected readonly copy = this.content.sections.contact;
   protected readonly site = this.content.site;
+  protected readonly endpoint = ENDPOINT;
+
+  protected readonly state = signal<State>('idle');
   protected readonly note = signal('');
+
+  /* Stamped when the component renders. The Function rejects submissions that
+     arrive implausibly fast. Zero during prerender, which the Function treats
+     as "no signal" rather than as suspicious. */
+  protected readonly renderedAt = typeof window === 'undefined' ? 0 : Date.now();
 
   protected readonly form = new FormGroup({
     name: new FormControl('', { nonNullable: true, validators: Validators.required }),
@@ -67,41 +104,83 @@ export class Contact {
     topic: new FormControl('', { nonNullable: true }),
   });
 
+  protected readonly buttonLabel = computed(() =>
+    this.state() === 'sending' ? 'Sending…' : this.site.cta
+  );
+
   constructor() {
-    this.form.valueChanges.subscribe(() => this.note.set(''));
+    this.form.valueChanges.subscribe(() => {
+      if (this.state() !== 'sending') {
+        this.state.set('idle');
+        this.note.set('');
+      }
+    });
   }
 
-  /**
-   * Hands off to the visitor's mail client. Fragile — on mobile and webmail it
-   * often goes nowhere — and the reason a server-side handler is on the list.
-   */
-  protected submit() {
+  /** Last resort when the endpoint itself is unreachable. */
+  protected readonly mailtoFallback = computed(() => {
     const { name, org, email, topic } = this.form.getRawValue();
-
-    if (!name.trim() || !email.trim()) {
-      this.note.set('Please add your name and email.');
-      return;
-    }
-    if (!EMAIL.test(email.trim())) {
-      this.note.set('That email address looks incomplete.');
-      return;
-    }
-
-    const to = this.site.email;
     const subject = 'Program request' + (topic.trim() ? `: ${topic.trim()}` : '');
     const body = [
       `Name: ${name.trim()}`,
       `Organization: ${org.trim() || '—'}`,
       `Email: ${email.trim()}`,
       `Program of interest: ${topic.trim() || '—'}`,
-      '',
-      `Sent from ${location.host}`,
     ].join('\n');
+    return `mailto:${this.site.email}?subject=${encodeURIComponent(subject)}`
+      + `&body=${encodeURIComponent(body)}`;
+  });
 
-    location.href =
-      `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    this.note.set(
-      `Opening your email app with the request to ${to} — press send there.`
-    );
+  protected async submit(event: Event) {
+    event.preventDefault();
+    if (this.state() === 'sending') return;
+
+    const { name, org, email, topic } = this.form.getRawValue();
+
+    if (!name.trim() || !email.trim()) {
+      this.state.set('failed');
+      this.note.set('Please add your name and email.');
+      return;
+    }
+    if (!EMAIL.test(email.trim())) {
+      this.state.set('failed');
+      this.note.set('That email address looks incomplete.');
+      return;
+    }
+
+    this.state.set('sending');
+    this.note.set('');
+
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          org: org.trim(),
+          email: email.trim(),
+          topic: topic.trim(),
+          rendered_at: this.renderedAt,
+        }),
+      });
+
+      const result = (await response.json().catch(() => null)) as
+        | { ok?: boolean; message?: string }
+        | null;
+
+      if (response.ok && result?.ok) {
+        this.state.set('sent');
+        this.note.set(result.message ?? 'Thank you — your request has been sent.');
+        this.form.reset();
+        return;
+      }
+
+      this.state.set('failed');
+      this.note.set(result?.message ?? 'We could not send that just now.');
+    } catch {
+      // Offline, blocked, or the endpoint is not deployed yet.
+      this.state.set('failed');
+      this.note.set('We could not reach the server.');
+    }
   }
 }

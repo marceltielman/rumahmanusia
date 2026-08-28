@@ -356,3 +356,24 @@ section[id] { scroll-margin-top: 84px; }
 @keyframes rm-t-b { from { opacity: 0; transform: translateY(12px) scale(0.985); } to { opacity: 1; transform: none; } }
 @keyframes rm-q-a2 { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
 @keyframes rm-q-b2 { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+
+/* ── no-JavaScript fallback ──────────────────────────────────────────────
+   The reveal animations and the loading overlay all wait for script to add a
+   class. Without it the page renders complete in the markup and blank on
+   screen — the overlay covers the viewport and every section sits at opacity 0.
+   These rules are the default; the head script removes .no-js before paint.
+   (A <noscript><style> block is not usable: the build's critical-CSS pass
+   escapes its contents.) */
+.no-js .rm-loader { display: none !important; }
+.no-js .rm-progress { display: none !important; }
+.no-js .rm-rise,
+.no-js .rm-rise > *,
+.no-js .rm-hero > *,
+.no-js .rm-panel { opacity: 1 !important; transform: none !important; animation: none !important; }
+.no-js .rm-rise h1,
+.no-js .rm-rise h2,
+.no-js .rm-hero h1 { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+.no-js .rm-rise .rm-kick::after { transform: scaleX(1) !important; }
+.no-js .rm-face::before,
+.no-js .rm-face::after { display: none !important; }
+.no-js .rm-face img { opacity: 1 !important; filter: none !important; animation: none !important; }
