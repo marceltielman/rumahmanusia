@@ -1,5 +1,5 @@
 /**
- * POST /api/enquiry
+ * POST /api/enquiry — Cloudflare Pages Function.
  *
  * Delivers the contact form to the enquiry address. Replaces a `mailto:`
  * handoff that silently lost submissions on mobile and webmail.
@@ -7,14 +7,14 @@
  * Replies JSON to a fetch and HTML to a plain form post, so the form still
  * works with JavaScript disabled.
  *
- * Required Worker environment variables:
+ * Required Pages environment variables:
  *   RESEND_API_KEY   from resend.com; never committed
  *   ENQUIRY_TO       destination, e.g. layanan@rumahmanusia.com
  *   ENQUIRY_FROM     a verified sender on a domain verified in Resend,
  *                    e.g. "Rumah Manusia <website@rumahmanusia.com>"
  */
 
-export interface EnquiryEnv {
+interface Env {
   RESEND_API_KEY?: string;
   ENQUIRY_TO?: string;
   ENQUIRY_FROM?: string;
@@ -32,7 +32,22 @@ const MIN_FILL_MS = 3000;
 const FIELDS = ['name', 'org', 'email', 'topic'] as const;
 type Field = (typeof FIELDS)[number];
 
-export async function handleEnquiry(request: Request, env: EnquiryEnv): Promise<Response> {
+interface PagesContext {
+  request: Request;
+  env: Env;
+}
+
+/* One handler for every method: Pages would otherwise fall through to the asset
+ * layer, which answers a navigation POST with a bare 405 and no body. */
+export async function onRequest(context: PagesContext): Promise<Response> {
+  const { request, env } = context;
+  if (request.method !== 'POST') {
+    return new Response('Method not allowed', { status: 405, headers: { allow: 'POST' } });
+  }
+  return handleEnquiry(request, env);
+}
+
+async function handleEnquiry(request: Request, env: Env): Promise<Response> {
   const wantsJson = (request.headers.get('accept') ?? '').includes('application/json');
 
   const reply = (status: number, ok: boolean, message: string) =>
