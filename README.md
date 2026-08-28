@@ -98,8 +98,64 @@ Publishing in Studio does not rebuild the site by itself. Create a Deploy Hook
 in Pages and add it as a webhook in the Sanity project so a publish triggers a
 new build.
 
-## Content
+## Changing content
 
-Sanity project `k01eodu7`, dataset `production`. Editing happens in Studio;
-`content/*.json` is the original seed and a readable mirror, not what the site
-serves. See `CLAUDE.md` for the architecture rules that are load-bearing.
+**Studio: https://rumahmanusia.sanity.studio/** — sign in with the Sanity account
+that owns the project. Nothing to install and no terminal needed.
+
+The left-hand list has one entry per area of the page: Site, Hero, Section
+headings, Services, Strategies, Formats, Programs, Schedule, Online learning,
+Advantages, Testimonials, Clients, Team. Each is a single document, so there is
+no way to accidentally create a second copy of a section.
+
+Edit, then **Publish**. Drafts save as you type and change nothing on the site
+until published.
+
+Some things worth knowing:
+
+- **Order is the order on the page.** Drag items within a list to reorder them;
+  program numbering is generated, not stored.
+- **Icons are picked from a list**, never pasted as SVG. To add a new one it has
+  to be added in two places: `app/src/app/ui/icons.ts` and
+  `studio/schemaTypes/_helpers.js`.
+- **Schedule months are `YYYY-MM`.** Labels, the timeline and the bar chart are
+  all generated from that, so adding or removing a month redraws both charts.
+- **Photos**: upload in Studio. The six empty placeholders show their caption
+  until an image is added, then swap to the image automatically.
+
+To let someone else edit, invite them under Members at
+`manage.sanity.io/project/k01eodu7` (the free plan covers three users).
+
+Redeploying Studio after a schema change: `npm run studio:deploy`.
+
+### Making a publish rebuild the site
+
+Publishing does not rebuild the site on its own. Two steps, once:
+
+1. **Cloudflare** → your Pages project → Settings → Builds & deployments →
+   *Deploy hooks* → Add. Name it, branch `main`, and copy the URL.
+2. **Sanity** → `manage.sanity.io/project/k01eodu7/api/webhooks` → Create
+   webhook:
+
+   | Field | Value |
+   |---|---|
+   | Dataset | `production` |
+   | URL | the deploy hook URL |
+   | Trigger on | Create, Update, Delete |
+   | Filter | `!(_id in path("drafts.**"))` |
+   | HTTP method | `POST` |
+
+The filter matters. Without it the hook fires on every draft autosave — a build
+every few seconds while someone types, which would exhaust the free build
+allowance quickly. With it, only publishing triggers a build.
+
+Do not use `sanity hook create` for this; it makes the older unfiltered kind.
+
+Until the hook exists, content changes appear on the next build from any cause:
+a push to `main`, or `npm run deploy`.
+
+## Content model
+
+Sanity project `k01eodu7`, dataset `production`. `content/*.json` is the original
+seed and a readable mirror, not what the site serves. See `CLAUDE.md` for the
+architecture rules that are load-bearing.
