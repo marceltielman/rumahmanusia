@@ -12,7 +12,10 @@
     "studio:deploy": "npm --prefix studio run deploy",
     "content:fetch": "npm --prefix app run fetch:content",
     "content:seed": "node tools/make-sanity-import.mjs",
-    "deploy": "npm run build && npx --yes wrangler@latest pages deploy app/dist/app/browser --project-name=rumahmanusia",
-    "deploy:preview": "npm run build && npx --yes wrangler@latest pages dev app/dist/app/browser --compatibility-date=2026-08-27"
+    "deploy": "npm run build && npx wrangler deploy",
+    "deploy:preview": "npm run build && npx wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.127.0"
   }
 }

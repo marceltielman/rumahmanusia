@@ -29,3 +29,6 @@ yarn-error.log*
 
 # macOS
 .DS_Store
+
+# wrangler local state (miniflare caches, trace stores)
+.wrangler/

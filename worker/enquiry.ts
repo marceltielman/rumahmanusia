@@ -1,5 +1,5 @@
 /**
- * POST /api/enquiry — Cloudflare Pages Function.
+ * POST /api/enquiry
  *
  * Delivers the contact form to the enquiry address. Replaces a `mailto:`
  * handoff that silently lost submissions on mobile and webmail.
@@ -7,22 +7,17 @@
  * Replies JSON to a fetch and HTML to a plain form post, so the form still
  * works with JavaScript disabled.
  *
- * Required Pages environment variables:
+ * Required Worker environment variables:
  *   RESEND_API_KEY   from resend.com; never committed
  *   ENQUIRY_TO       destination, e.g. layanan@rumahmanusia.com
  *   ENQUIRY_FROM     a verified sender on a domain verified in Resend,
  *                    e.g. "Rumah Manusia <website@rumahmanusia.com>"
  */
 
-interface Env {
+export interface EnquiryEnv {
   RESEND_API_KEY?: string;
   ENQUIRY_TO?: string;
   ENQUIRY_FROM?: string;
-}
-
-interface PagesContext {
-  request: Request;
-  env: Env;
 }
 
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -37,8 +32,7 @@ const MIN_FILL_MS = 3000;
 const FIELDS = ['name', 'org', 'email', 'topic'] as const;
 type Field = (typeof FIELDS)[number];
 
-export async function onRequestPost(context: PagesContext): Promise<Response> {
-  const { request, env } = context;
+export async function handleEnquiry(request: Request, env: EnquiryEnv): Promise<Response> {
   const wantsJson = (request.headers.get('accept') ?? '').includes('application/json');
 
   const reply = (status: number, ok: boolean, message: string) =>
@@ -96,11 +90,6 @@ export async function onRequestPost(context: PagesContext): Promise<Response> {
     console.error('enquiry: unhandled', error);
     return reply(500, false, 'Something went wrong. Please email us directly.');
   }
-}
-
-/** Any other verb on this path is a mistake or a probe. */
-export function onRequest(): Response {
-  return new Response('Method not allowed', { status: 405, headers: { allow: 'POST' } });
 }
 
 async function readForm(request: Request): Promise<FormData | null> {
