@@ -6,6 +6,7 @@ studio/dist/
 # reproducible. (The repo's initial .gitignore excluded it; that would make
 # every CI install resolve fresh versions.)
 node_modules/
+.wrangler/
 
 # Sanity Studio local state
 studio/.sanity/

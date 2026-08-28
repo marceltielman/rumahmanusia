@@ -27,13 +27,20 @@ npm run studio     # Sanity Studio (needs: npm --prefix studio install)
 ```
 
 To exercise the enquiry Function and the `_headers` rules locally, serve the
-build through Cloudflare's runtime rather than a plain static server:
+build through Cloudflare's runtime rather than a plain static server — a plain
+static server cannot run Functions or apply `_headers`:
 
 ```sh
-npx wrangler pages dev app/dist/app/browser --compatibility-date=2026-08-27
+npm run deploy:preview
 ```
 
 ## Deploying to Cloudflare Pages
+
+Two routes. **Git integration is the one to use** — direct upload cannot
+auto-deploy on push, and Deploy Hooks are a Git-integration feature, so the
+Sanity webhook that rebuilds on publish only works with it.
+
+### Git integration (preferred)
 
 Connect the GitHub repository, then:
 
@@ -43,6 +50,22 @@ Connect the GitHub repository, then:
 | Build command | `npm run build` |
 | Build output directory | `app/dist/app/browser` |
 | Root directory | `/` |
+
+Cloudflare then builds on every push to `main`. There is no deploy command in
+this mode.
+
+### Direct upload (quick previews)
+
+```sh
+npx wrangler login    # once
+npm run deploy
+```
+
+Uploads the built output straight to Cloudflare, skipping Git. Useful for a
+one-off preview; it will not rebuild when you push, and environment variables
+still have to be set in the dashboard.
+
+### Notes on both
 
 `functions/` is picked up automatically from the repo root. The Node version is
 pinned by `.node-version` — Angular 22 requires ≥22.22, above Cloudflare's
