@@ -148,7 +148,100 @@ contained change. Adding a half-used second locale before translations exist
 would only be scaffolding, and a bilingual site doubles the editorial burden
 permanently.
 
-### 11. Content decisions for a human
+### 11. Per-program pages — discussed 2026-08-28, blocked on content
+
+Splitting the single page into About / Programs / Team / Contact is **not worth
+doing**: roughly neutral to slightly negative. The page currently has strong
+topical density and one narrative ending in a CTA. Cutting it into five thinner
+pages spreads whatever authority accrues and loses people at every navigation
+hop. For a brochure site, one strong page usually beats five weak ones.
+
+**A page per program is a different proposition and could be a real win.** The 69
+program names are the long-tail inventory — someone searching "pelatihan
+assertive communication" wants a page about that program, not a homepage with 69
+rows. One page carries one title, one H1, one meta description; it cannot rank
+well for 69 distinct intents.
+
+There is also a concrete technical gain: the JSON-LD already emits all 69 as
+`Course` entries, but as *data* with no page behind them. Real `Course` pages
+with `hasCourseInstance` fed from the schedule dates are eligible for Google's
+course rich results, which only works with separate pages.
+
+**The blocker is content, not engineering.** 69 pages carrying only a program
+name plus shared boilerplate are textbook thin content — they would rank *worse*
+than today's page and risk quality problems. Each needs real substance: what it
+covers, who it is for, duration, format, outcomes. That is 69 x a few
+paragraphs, and it is a writing job.
+
+Engineering side is contained: Angular's prerenderer handles many routes
+(`getPrerenderParams`), the Sanity schema gains a per-program document type,
+plus routing, internal linking and sitemap entries.
+
+**Recommended shape if it goes ahead:** keep the single page as the homepage and
+add program pages **progressively**, starting with the 10-15 programs that
+actually sell, each with real content. Prove the pattern rather than publishing
+54 stubs. The schedule is a second candidate, since dated public runs are exactly
+what `hasCourseInstance` describes.
+
+### 12. Move the mailboxes off GoDaddy
+
+Note that **the website is already off GoDaddy** - it runs on Cloudflare Pages.
+GoDaddy now does only two things: hold the domain, and host the mailboxes.
+
+**The trap:** the mailboxes are bundled with the hosting plan. Cancelling the
+hosting destroys them. This is a migration, not a billing change.
+
+Current cost is about EUR 100/year *including* email, which is cheap for email
+alone. **The renewal price is the trigger to move, not today.**
+
+On AWS, asked 2026-08-28 - two unrelated products, and the distinction matters:
+
+- **SES** is for *sending* only. It is what Resend does for the contact form; you
+  cannot log in and read mail. Excellent and cheap (~$0.10/1000), but needs
+  domain verification, a sandbox-exit request and IAM credentials. Resend's free
+  tier already covers 3,000/month, so switching is not worth it.
+- **WorkMail** does host real mailboxes, around $4/seat/month. Judged the wrong
+  choice here: dated webmail, weaker calendar and contacts than the
+  alternatives, and unremarkable pricing - roughly $480/year at ten mailboxes.
+  Only sensible if the business is already deep in AWS and wants one bill.
+
+Shortlist that stands, for 4-10 mailboxes:
+
+| | Roughly |
+|---|---|
+| **Migadu** - flat rate, unlimited mailboxes | ~EUR 90/yr |
+| **Zoho Mail** - per seat, IMAP on paid tiers only | ~$1/seat/mo |
+| **Microsoft 365** - if Office is already paid for, near-zero marginal cost | ~$6/seat/mo |
+| **Google Workspace** - if the team already lives in Gmail | ~$7/seat/mo |
+
+Before choosing: **count how many of the addresses are people rather than role
+addresses.** `layanan@`, `info@` and similar should be aliases or shared
+mailboxes, which are free everywhere. Paying a seat for each is the common and
+expensive mistake.
+
+Migration recipe, in the order that avoids losing mail:
+
+1. A day ahead, drop the MX TTL to 300.
+2. Export the **whole** DNS zone, especially MX, SPF, DKIM and DMARC.
+3. Create the mailboxes and sync **while the old MX is still live**, using the
+   provider's own migration tool.
+4. Switch MX.
+5. **Re-run the sync** - this sweeps up anything delivered during propagation.
+6. Test send *and* receive on every address, especially `layanan@`.
+7. SPF, DKIM and DMARC must be **regenerated** for the new provider, not copied.
+8. Anything sending through the old SMTP credentials - printers, a CRM - needs
+   new settings or it silently stops.
+
+### 13. Domain registration
+
+Worth moving separately from anything else. Cloudflare Registrar sells at
+wholesale with no markup, which usually beats GoDaddy's renewal rates
+noticeably.
+
+**Do not transfer mid-migration.** A transfer imposes a 60-day lock, and DNS
+should stay stable while the site and mail are being cut over.
+
+### 14. Content decisions for a human
 
 - **`HARD_PROGRAMS` lists "DEBT RESTRUCTURING" twice.** In the design source.
   The "69 programs" copy depends on the duplicate; fixing it makes the number 68.
